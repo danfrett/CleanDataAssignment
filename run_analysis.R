@@ -49,10 +49,16 @@ run_analysis <-function(){
       
       ## clean up names as there are no more duplicates
       name_vector <- unlist(lapply(strsplit(names(big_data),"|", fixed = TRUE), function(x) x[1]))
+      name_vector <- sub("\\(","",name_vector)
+      name_vector <- sub(")","",name_vector)
+      name_vector <- gsub("-","", name_vector)
       colnames(big_data) <- name_vector
       
+      big_data_grp <- group_by(big_data, subject_id, Activity)
+      big_sum <- summarise_each(big_data_grp, funs(mean))
+
       ## write the table as a tab delimmited txt file
-      write.table(big_data, file.path(getwd(),"tidy_data.txt"), row.names = FALSE, sep = "\t")
+      write.table(big_sum, file.path(getwd(),"tidy_data.txt"), row.names = FALSE, sep = "\t")
       
 }
 
